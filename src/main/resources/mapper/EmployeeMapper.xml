@@ -1,0 +1,135 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.crazy.employee.manage.mapper.EmployeeMapper">
+    <resultMap type="com.crazy.employee.manage.domain.Employee" id="EmployeeMap">
+        <result property="id" column="id"/>
+        <result property="empName" column="emp_name"/>
+        <result property="sex" column="sex"/>
+        <result property="age" column="age"/>
+        <result property="deptName" column="dept_name"/>
+        <result property="empDegreeName" column="emp_degree_name"/>
+    </resultMap>
+
+    <!-- 通过ID查询单条数据 -->
+    <select id="queryById" resultMap="EmployeeMap">
+        select
+            id,emp_name,sex,age,dept_name,emp_degree_name
+        from employee
+        where id = #{id}
+    </select>
+
+    <!--分页查询指定行数据-->
+    <select id="queryAllByLimit" resultMap="EmployeeMap">
+        select
+        id,emp_name,sex,age,dept_name,emp_degree_name
+        from employee
+        <where>
+            <if test="employee.id != null and employee.id != ''">
+                and id = #{employee.id}
+            </if>
+            <if test="employee.empName != null and employee.empName != ''">
+                and emp_name = #{employee.empName}
+            </if>
+            <if test="employee.sex != null and employee.sex != ''">
+                and sex = #{employee.sex}
+            </if>
+            <if test="employee.age != null and employee.age != ''">
+                and age = #{employee.age}
+            </if>
+            <if test="employee.deptName != null and employee.deptName != ''">
+                and dept_name = #{employee.deptName}
+            </if>
+            <if test="employee.empDegreeName != null and employee.empDegreeName != ''">
+                and emp_degree_name = #{employee.empDegreeName}
+            </if>
+        </where>
+    </select>
+
+    <!--统计总行数-->
+    <select id="count" resultType="java.lang.Long">
+        select count(1)
+        from employee
+        <where>
+            <if test="id != null and id != ''">
+                and id = #{id}
+            </if>
+            <if test="empName != null and empName != ''">
+                and emp_name = #{empName}
+            </if>
+            <if test="sex != null and sex != ''">
+                and sex = #{sex}
+            </if>
+            <if test="age != null and age != ''">
+                and age = #{age}
+            </if>
+            <if test="deptName != null and deptName != ''">
+                and dept_name = #{deptName}
+            </if>
+            <if test="empDegreeName != null and empDegreeName != ''">
+                and emp_degree_name = #{empDegreeName}
+            </if>
+        </where>
+    </select>
+
+    <!--新增数据-->
+    <insert id="insert" keyProperty="id" useGeneratedKeys="true">
+        insert into employee(id,emp_name,sex,age,dept_name,emp_degree_name)
+        values (#{id},#{empName},#{sex},#{age},#{deptName},#{empDegreeName})
+    </insert>
+
+    <!-- 批量新增数据 -->
+    <insert id="insertBatch" keyProperty="id" useGeneratedKeys="true">
+        insert into employee(id,emp_name,sex,age,dept_name,emp_degree_name)
+        values
+        <foreach collection="entities" item="entity" separator=",">
+            (#{entity.id},#{entity.empName},#{entity.sex},#{entity.age},#{entity.deptName},#{entity.empDegreeName})
+        </foreach>
+    </insert>
+
+    <!-- 批量新增或按主键更新数据 -->
+    <insert id="insertOrUpdateBatch" keyProperty="id" useGeneratedKeys="true">
+        insert into employee(id,emp_name,sex,age,dept_name,emp_degree_name)
+        values
+        <foreach collection="entities" item="entity" separator=",">
+            (#{entity.id},#{entity.empName},#{entity.sex},#{entity.age},#{entity.deptName},#{entity.empDegreeName})
+        </foreach>
+        on duplicate key update
+        id=values(id),
+        emp_name=values(emp_name),
+        sex=values(sex),
+        age=values(age),
+        dept_name=values(dept_name),
+        emp_degree_name=values(emp_degree_name)
+    </insert>
+
+    <!-- 更新数据 -->
+    <update id="update">
+        update employee
+        <set>
+            <if test="id != null and id != ''">
+                id = #{id},
+            </if>
+            <if test="empName != null and empName != ''">
+                emp_name = #{empName},
+            </if>
+            <if test="sex != null and sex != ''">
+                sex = #{sex},
+            </if>
+            <if test="age != null and age != ''">
+                age = #{age},
+            </if>
+            <if test="deptName != null and deptName != ''">
+                dept_name = #{deptName},
+            </if>
+            <if test="empDegreeName != null and empDegreeName != ''">
+                emp_degree_name = #{empDegreeName},
+            </if>
+        </set>
+        where id = #{id}
+    </update>
+
+    <!--通过主键删除-->
+    <delete id="deleteById">
+        delete from employee where id = #{id}
+    </delete>
+</mapper>
